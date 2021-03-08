@@ -32,8 +32,8 @@ function go(width, height) {
     // Add camera
     let camera = new Module.Camera(new Module.Vector3(0, 20, -20), width, height, fov);
     camera.angleX = 30 * M_PI/ 180.0;
-    camera.angleY = 0 * M_PI/ 180.0;
-    camera.angleZ = 0 * M_PI/ 180.0;
+    camera.angleY = 0;
+    camera.angleZ = 0;
   
     // Create Renderer
     let r = new Module.Renderer(width, height, scene, camera);
@@ -48,8 +48,7 @@ function trace(x, y, renderer, camera) {
         let rand = Module.Vector3.random();
 
         // Send a jittered ray through each pixel
-        let v = new Module.Vector3(x + rand.x, y + rand.y, 1);
-        let rayDirection = camera.pixelToViewport(v);
+        let rayDirection = camera.pixelToViewport(new Module.Vector3(x + rand.x, y + rand.y, 1));
         let ray = new Module.Ray(camera.position, rayDirection);
 
         // Get pixel for traced ray

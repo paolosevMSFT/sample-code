@@ -7,7 +7,7 @@ function go(width, height) {
     let scene = new Module.Scene();
     scene.backgroundColor = new Module.Color();
 
-    let s1 = new Module.Sphere(new Module.Vector3(0, 0, 20), 2, new Module.Color(165, 10, 14), new Module.Color(255), 0.3, 0.8, 0.5, 128.0, .65, 0.99);//0.05, 0.95); // Clear
+    let s1 = new Module.Sphere(new Module.Vector3(0, 0, 20), 2, new Module.Color(165, 10, 14), new Module.Color(255), 0.3, 0.8, 0.5, 128.0, .65, 0.99); // Clear
     s1.glossy_transparency = 0.02;
     s1.glossiness = 0.05;
     let s2 = new Module.Sphere(new Module.Vector3(5, -1, 15), 2, new Module.Color(235, 179, 41), new Module.Color(255), 0.4, 0.6, 0.4, 128.0, 1.0, 0.0, 0.2); // Yellow
@@ -32,8 +32,8 @@ function go(width, height) {
     // Add camera
     let camera = new Module.Camera(new Module.Vector3(0, 20, -20), width, height, fov);
     camera.angleX = 30 * M_PI/ 180.0;
-    camera.angleY = 0 * M_PI/ 180.0;
-    camera.angleZ = 0 * M_PI/ 180.0;
+    camera.angleY = 0;
+    camera.angleZ = 0;
   
     // Create Renderer
     let r = new Module.Renderer(width, height, scene, camera);
@@ -48,8 +48,7 @@ function trace(x, y, renderer, camera) {
         let rand = Module.Vector3.prototype.random();
 
         // Send a jittered ray through each pixel
-        let v = new Module.Vector3(x + rand.x, y + rand.y, 1);
-        let rayDirection = camera.pixelToViewport(v);
+        let rayDirection = camera.pixelToViewport(new Module.Vector3(x + rand.x, y + rand.y, 1));
         let ray = new Module.Ray(camera.position, rayDirection);
 
         // Get pixel for traced ray
