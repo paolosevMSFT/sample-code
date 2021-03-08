@@ -1,0 +1,142 @@
+interface Color {
+  void Color();
+  void Color(float c);
+  void Color(float r, float g, float b);
+
+  [Ref] Color clamp();
+  [Ref] Color add([Ref, Const] Color c);
+  [Value] Color mul(float f);
+
+  attribute float r;
+  attribute float g;
+  attribute float b;
+};
+
+interface Vector3 {
+  void Vector3();
+  void Vector3(float xx);
+  void Vector3(float xx, float yy, float zz);
+  
+  float dot([Ref, Const] Vector3 v);
+  [Ref] Vector3 normalize();
+
+  attribute float x;
+  attribute float y;
+  attribute float z;
+
+  [Value] static Vector3 random();  
+};
+
+interface Camera {
+  void Camera([Ref, Const] Vector3 position, long width, long height, float fov);
+
+  [Value] Vector3 pixelToViewport([Ref, Const] Vector3 pixel);
+
+  [Value] attribute Vector3 position;
+  attribute long width;
+  attribute long height;
+  attribute float invWidth;
+  attribute float invHeight;
+  attribute float fov;
+  attribute float aspectratio;
+  attribute float angle;
+  attribute float angleX;
+  attribute float angleY;
+  attribute float angleZ;
+};
+
+interface Ray {
+  void Ray([Ref, Const] Vector3 origin, [Ref, Const] Vector3 direction);
+
+  [Value] attribute Vector3 origin;
+  [Value] attribute Vector3 direction;  
+};
+
+interface Light {
+  float attenuate([Const] float r);
+
+  [Value] attribute Vector3 position;
+  [Value] attribute Vector3 intensity;
+  attribute byte type;
+  attribute long samples;
+  attribute float width;
+  attribute float height;
+};
+
+interface AmbientLight {
+  void AmbientLight();
+  void AmbientLight([Ref, Const] Vector3 intensity);  
+};
+AmbientLight implements Light;
+
+interface DirectionalLight {
+  void DirectionalLight();
+  void DirectionalLight([Ref, Const] Vector3 position, [Ref, Const] Vector3 intensity);  
+};
+DirectionalLight implements Light;
+
+interface PointLight {
+  void PointLight();
+  void PointLight([Ref, Const] Vector3 position, [Ref, Const] Vector3 intensity);  
+};
+PointLight implements Light;
+
+interface AreaLight {
+  void AreaLight();
+  void AreaLight([Ref, Const] Vector3 position, [Ref, Const] Vector3 intensity);  
+};
+AreaLight implements Light;
+
+interface Shape {
+  //bool intersect([Ref, Const] Ray ray, float* t0, float* t1);
+  [Value] Vector3 getNormal([Ref, Const] Vector3 hitPoint);
+
+  [Value] attribute Color color;
+  [Value] attribute Color color_specular;
+  attribute float ka;
+  attribute float kd;
+  attribute float ks;
+  attribute float shininess;
+  attribute float reflectivity;
+  attribute float transparency;
+  attribute float glossiness;
+  attribute float glossy_transparency;  
+};
+
+interface Sphere {
+  void Sphere([Ref, Const] Vector3 center, [Const] float radius,
+    [Ref, Const] Color color, [Ref, Const] Color color_specular, [Const] float ka, [Const] float kd,
+    [Const] float ks, [Const] float shinny, [Const] float reflectScale);
+  void Sphere([Ref, Const] Vector3 center, [Const] float radius,
+    [Ref, Const] Color color, [Ref, Const] Color color_specular, [Const] float ka, [Const] float kd,
+    [Const] float ks, [Const] float shinny, [Const] float reflectScale,
+    [Const] float transparency);
+  void Sphere([Ref, Const] Vector3 center, [Const] float radius,
+    [Ref, Const] Color color, [Ref, Const] Color color_specular, [Const] float ka, [Const] float kd,
+    [Const] float ks, [Const] float shinny, [Const] float reflectScale,
+    [Const] float transparency, [Const] float glossiness);
+
+  [Value] attribute Vector3 center;
+  attribute float radius;
+  attribute float radius2;      
+};
+Sphere implements Shape;
+
+interface Scene {
+  void Scene();
+
+  void addAmbientLight([Ref, Const] AmbientLight light);
+  void addLight(Light light);
+  void addObject(Shape shape);
+
+  [Value] attribute Color backgroundColor;
+  [Value] attribute AmbientLight ambientLight;
+};
+
+interface Renderer {
+  void Renderer(float width, float height, [Ref, Const] Scene scene, [Ref, Const] Camera camera);
+
+  // void render();
+  // void render_distributed_rays();
+  [Value] Color trace([Ref, Const] Ray ray, [Const] long depth);
+};

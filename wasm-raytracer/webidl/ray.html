@@ -1,0 +1,36 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ray</title>
+</head>
+
+<body>
+  <button type="button" onclick="render()">Render</button>
+  <canvas id="canvas" width="540", height="400", style="background-color: dimgray;"></canvas>
+  <div id="time"></div>
+
+  <script src="rt.js"></script>
+  <script src="ray.js"></script>
+
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');    
+
+    function render() {
+      var tStart = performance.now();
+      let uint8Array = go(canvas.width, canvas.height);
+      var tEnd = performance.now();
+
+      let imgData = ctx.createImageData(canvas.width, canvas.height);
+      for (var i = 0; i < uint8Array.length; i++) {
+        imgData.data[i] = uint8Array[i];
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      document.getElementById("time").innerHTML = (tEnd - tStart) + " msec.";
+    }
+  </script>
+</body>
+</html>

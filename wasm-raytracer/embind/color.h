@@ -1,0 +1,47 @@
+#include <emscripten/bind.h>
+using namespace emscripten;
+
+struct Color {
+  float r, g, b;
+  Color() : r(0), g(0), b(0) {}
+  Color(float c) : r(c), g(c), b(c) {}
+  Color(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
+  Color operator * (float f) const { return Color(r * f, g * f, b * f); }
+  Color operator * (Vector3 f) const { return Color(r * f.x, g * f.y, b * f.z); }
+  Color operator * (Color c) const { return Color(r * c.r, g * c.g, b * c.b); }
+  Color operator + (Color c) const { return Color(r + c.r, g + c.g, b + c.b); } 
+  Color& operator += (const Color &c) { r += c.r, g += c.g, b += c.b; return *this; }
+  Color& operator *= (const Color &c) { r *= c.r, g *= c.g, b *= c.b; return *this; }
+
+  Color& add(const Color &c) { r += c.r, g += c.g, b += c.b; return *this; }
+  Color mul(float f) { return Color(r * f, g * f, b * f); }
+
+  Color& clamp() {
+    if (r < 0) r = 0;
+    else if (r > 255) r = 255;
+
+    if (g < 0) g = 0;
+    else if (g > 255) g = 255;
+
+    if (b < 0) b = 0;    
+    else if (b > 255) b = 255;
+
+    return *this;
+  }
+
+};
+
+// Binding code
+EMSCRIPTEN_BINDINGS(color) {
+  class_<Color>("Color")
+    .constructor<>()
+    .constructor<float>()
+    .constructor<float, float, float>()    
+    .function("clamp", &Color::clamp)
+    .function("add", &Color::add)
+    .function("mul", &Color::mul)    
+    .property("r", &Color::r)
+    .property("g", &Color::g)
+    .property("b", &Color::b)    
+    ;
+}
